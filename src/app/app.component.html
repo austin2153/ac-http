@@ -59,9 +59,11 @@
           <p>{{ post.content }}</p>
         </li>
       </ul>
-      <!-- <p *ngIf="isFetching">Loading...</p> -->
       <div class="spinner-border text-primary" role="status" *ngIf="isFetching">
         <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="alert alert-danger" role="alert" *ngIf="error">
+        An error occured - {{ error }}
       </div>
     </div>
   </div>
