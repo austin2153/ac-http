@@ -4,9 +4,9 @@ import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
 import { PostsService } from './posts.service';
-
 import { User } from './model/user.model'
 import { UserService } from './user.service';
+import { VraService } from './vra.service'
 
 import { Subscription } from 'rxjs';
 
@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   loadedPosts: Post[] = [];
   loadedUsers: User[] = [];
+  authkey: string;
   isFetching = false;
   error = null;
   private errorSub: Subscription;
@@ -25,23 +26,29 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient, 
     private postsService: PostsService,
-    private userService: UserService) {}
+    private userService: UserService,
+    private vraService: VraService) {}
 
   ngOnInit() {
-    // subject based way of passing error msg 
-    this.errorSub = this.postsService.error.subscribe(errorMessage => {
-      this.error = errorMessage;
-    });
+    // // subject based way of passing error msg 
+    // this.errorSub = this.postsService.error.subscribe(errorMessage => {
+    //   this.error = errorMessage;
+    // });
 
-    this.isFetching = true;
-    this.postsService.fetchPosts().subscribe(posts => {
-      this.isFetching = false;
-      this.loadedPosts = posts;
-    }, error => {
-      this.isFetching = false;
-      this.error = error.message;
-      console.log(error);
-    });
+    // this.isFetching = true;
+    // this.postsService.fetchPosts().subscribe(posts => {
+    //   this.isFetching = false;
+    //   this.loadedPosts = posts;
+    // }, error => {
+    //   this.isFetching = false;
+    //   this.error = error.message;
+    //   console.log(error);
+    // });
+
+    this.vraService.getToken().subscribe(result => {
+      console.log("VRA AUTH RESULT: " + result);
+      this.authkey = result;
+    })
   }
 
   onCreatePost(postData: Post) {
