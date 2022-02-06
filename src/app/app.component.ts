@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 
-import { Post } from './post.model';
-import { PostsService } from './posts.service';
+import { Post } from './model/post.model';
+import { PostsService } from './services/posts.service';
 import { User } from './model/user.model'
-import { UserService } from './user.service';
-import { VraService } from './vra.service'
+import { UserService } from './services/user.service';
+import { VraService } from './services/vra.service'
 
 import { Subscription } from 'rxjs';
 
@@ -18,7 +17,7 @@ import { Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   loadedPosts: Post[] = [];
   loadedUsers: User[] = [];
-  authkey: string;
+  deployments: any;
   isFetching = false;
   error = null;
   private errorSub: Subscription;
@@ -30,34 +29,32 @@ export class AppComponent implements OnInit, OnDestroy {
     private vraService: VraService) {}
 
   ngOnInit() {
-    // // subject based way of passing error msg 
-    // this.errorSub = this.postsService.error.subscribe(errorMessage => {
-    //   this.error = errorMessage;
-    // });
+    // subject based way of passing error msg 
+    this.errorSub = this.postsService.error.subscribe(errorMessage => {
+      this.error = errorMessage;
+    });
 
-    // this.isFetching = true;
-    // this.postsService.fetchPosts().subscribe(posts => {
-    //   this.isFetching = false;
-    //   this.loadedPosts = posts;
-    // }, error => {
-    //   this.isFetching = false;
-    //   this.error = error.message;
-    //   console.log(error);
-    // });
+    this.isFetching = true;
+    this.postsService.fetchPosts().subscribe(posts => {
+      this.isFetching = false;
+      this.loadedPosts = posts;
+    }, error => {
+      this.isFetching = false;
+      this.error = error.message;
+      console.log(error);
+    });
 
-    this.vraService.getToken().subscribe(result => {
-      console.log("VRA AUTH RESULT: " + result);
-      this.authkey = result;
-    })
+    // this.vraService.getDeployments().subscribe(result => {
+    //   console.log("Deployment Return: " + result);
+    //   this.deployments = result;
+    // })
   }
 
   onCreatePost(postData: Post) {
-    // Send Http request
     this.postsService.createAndStorePost(postData.title, postData.content);
   }
 
   onFetchPosts() {
-    // Send Http request
     this.isFetching = true;
     this.postsService.fetchPosts().subscribe(posts => {
       this.isFetching = false;
@@ -70,7 +67,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onClearPosts() {
-    // Send Http request
     this.postsService.deletePosts().subscribe(() => {
       this.loadedPosts = [];
     });
