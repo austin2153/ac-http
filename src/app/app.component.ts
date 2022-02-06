@@ -4,6 +4,10 @@ import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
 import { PostsService } from './posts.service';
+
+import { User } from './model/user.model'
+import { UserService } from './user.service';
+
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,11 +17,15 @@ import { Subscription } from 'rxjs';
 })
 export class AppComponent implements OnInit, OnDestroy {
   loadedPosts: Post[] = [];
+  loadedUsers: User[] = [];
   isFetching = false;
   error = null;
   private errorSub: Subscription;
 
-  constructor(private http: HttpClient, private postsService: PostsService) {}
+  constructor(
+    private http: HttpClient, 
+    private postsService: PostsService,
+    private userService: UserService) {}
 
   ngOnInit() {
     // subject based way of passing error msg 
@@ -67,6 +75,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.errorSub.unsubscribe();
+  }
+
+  onGetsUsers() {
+    this.userService.getUsers().subscribe(result => {
+      this.loadedUsers = result;
+    })
   }
 
 }
