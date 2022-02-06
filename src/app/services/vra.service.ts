@@ -17,14 +17,22 @@ export class VraService {
       "username": '',
       "password": ''
     };
+
+    // headers
     const headers = new HttpHeaders()
     .set('Content-Type', 'application/json')
     .set('Access-Control-Allow-Origin', '*')
 
-    return this.http.post<any>(vraURL+'csp/gateway/am/api/login?access_token', JSON.stringify(login),
+    // search params
+    let params = new HttpParams();
+    params = params.append('access_token', '');
+
+    return this.http.post<any>(vraURL+'csp/gateway/am/api/login', JSON.stringify(login),
       {
-        headers: headers
-      })
+        headers: headers,
+        params: params,
+        observe: 'response'
+      });
   }
 
   // get vra deployments
